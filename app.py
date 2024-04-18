@@ -1,4 +1,6 @@
-from flask import Flask, request, abort
+import psycopg2
+
+rom flask import Flask, request, abort
 
 from linebot import (
     LineBotApi, WebhookHandler
