@@ -80,7 +80,7 @@ def handle_message(event):
         message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
     elif '開始遊戲' in msg:
-        uid = event.joined.members[0].user_id
+        uid = str(event.source.user_id)
         answer_album='df'
         song_order=0
         sql_insert_answer_list_table=f"INSERT INTO answer_list VALUES('{uid}','{answer_album}',{song_order});"
