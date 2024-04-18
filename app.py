@@ -28,6 +28,30 @@ line_bot_api = LineBotApi('hi6hwoyDgSvIO7Z2Ymms71tDmKdqRTk53DCUTwVJU+fzcD3VPbRYz
 # Channel Secret
 handler = WebhookHandler('b5cbd67950dc5c0c1e9e007e736355c1')
 
+# 設置連線PostgreSQL時所需參數
+db_name="janfanchallenge"
+db_user="fanfan"
+db_password="5zzyVXNUBQqA9SgxgT3faewT8bpTJbP2"
+db_host="dpg-cof2ft8cmk4c73fusrm0-a.singapore-postgres.render.com"
+db_port=5432
+
+#建立連線函式庫(CREATE, INSERT, UPDATE, DELETE用)
+def postgreSQLConnect(command):
+  #建立連接
+  with psycopg2.connect(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port) as conn:
+    with conn.cursor() as cur:
+      #建立游標
+      cur=conn.cursor()
+
+      #建立SQL指令
+      sql_command=command
+
+      #執行指令
+      cur.execute(sql_command)
+
+    #提交
+    conn.commit()
+
 
 # 監聽所有來自 /callback 的 Post Request    
 @app.route("/callback", methods=['POST'])
@@ -49,23 +73,20 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     msg = event.message.text
-    if '最新合作廠商' in msg:
-        message = imagemap_message()
+    if '出題' in msg:
+        message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
-    elif '最新活動訊息' in msg:
-        message = buttons_message()
+    elif '不知道，正解?' in msg:
+        message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
-    elif '註冊會員' in msg:
-        message = Confirm_Template()
-        line_bot_api.reply_message(event.reply_token, message)
-    elif '旋轉木馬' in msg:
-        message = Carousel_Template()
-        line_bot_api.reply_message(event.reply_token, message)
-    elif '圖片畫廊' in msg:
-        message = test()
-        line_bot_api.reply_message(event.reply_token, message)
-    elif '功能列表' in msg:
-        message = function_list()
+    elif '開始遊戲' in msg:
+        uid = event.joined.members[0].user_id
+        answer_album='df'
+        song_order=0
+        sql_insert_answer_list_table=f"INSERT INTO answer_list VALUES('{uid}','{answer_album}',{song_order});"
+        #執行
+        postgreSQLConnect(sql_insert_answer_list_table)
+        message = TextSendMessage(text="點擊出題開始")
         line_bot_api.reply_message(event.reply_token, message)
     else:
         message = TextSendMessage(text=msg)
