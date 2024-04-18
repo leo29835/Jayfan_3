@@ -1,6 +1,6 @@
 import psycopg2
 
-rom flask import Flask, request, abort
+from flask import Flask, request, abort
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -93,6 +93,8 @@ def handle_message(event):
     else:
         message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
+        
+        #4/19進度 避免重複ID(連續輸入開始遊戲)、邏輯運作 
 
 @handler.add(PostbackEvent)
 def handle_message(event):
