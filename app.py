@@ -92,8 +92,9 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    msg = event.message.text
+    uid = str(event.source.user_id)
     if '出題' in msg:
-        uid = str(event.source.user_id)
         sql_select_ans_table='''
         SELECT * FROM album_list as al, song_list as sl
         WHERE al.album_no=sl.album_no
@@ -122,7 +123,6 @@ def handle_message(event):
         message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
     elif '開始遊戲' in msg:
-        uid = str(event.source.user_id)
         answer_album='df'
         song_order=0
         sql_insert_answer_list_table=f"INSERT INTO answer_list VALUES('{uid}','{answer_album}',{song_order});"
