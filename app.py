@@ -22,7 +22,7 @@ import tempfile, os
 import datetime
 import time
 #======python的函數庫==========
-
+#---------------------------------------------------------------------------------------------------------------------
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 # Channel Access Token
@@ -36,7 +36,7 @@ db_user="fanfan"
 db_password="5zzyVXNUBQqA9SgxgT3faewT8bpTJbP2"
 db_host="dpg-cof2ft8cmk4c73fusrm0-a.singapore-postgres.render.com"
 db_port=5432
-
+#---------------------------------------------------------------------------------------------------------------------
 #建立連線函式庫(CREATE, INSERT, UPDATE, DELETE用)
 def postgreSQLConnect(command):
   #建立連接
@@ -53,8 +53,26 @@ def postgreSQLConnect(command):
 
     #提交
     conn.commit()
+#---------------------------------------------------------------------------------------------------------------------
+def postgreSQLSelect(command):
+  #建立連接
+  with psycopg2.connect(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port) as conn:
+    with conn.cursor() as cur:
+      #建立游標
+      cur=conn.cursor()
 
+      #建立SQL指令
+      sql_command=command
 
+      #執行指令
+      cur.execute(sql_command)
+
+      #將查詢結果儲存
+      row = cur.fetchall()
+
+  #回傳查詢結果
+  return row
+#---------------------------------------------------------------------------------------------------------------------
 # 監聽所有來自 /callback 的 Post Request    
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -69,15 +87,37 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-
+#---------------------------------------------------------------------------------------------------------------------
 
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    msg = event.message.text
     if '出題' in msg:
-        message = TextSendMessage(text=msg)
+        uid = str(event.source.user_id)
+        sql_select_ans_table='''
+        SELECT * FROM album_list as al, song_list as sl
+        WHERE al.album_no=sl.album_no
+        ORDER BY RANDOM()
+        LIMIT 1
+        '''
+        #執行
+        x=postgreSQLSelect(sql_select_ans_table)
+        ansab=x[0][0]
+        anssgno=x[0][5]
+        qname=x[0][6]
+        # print(qname)
+        # print(ansab)
+        # print(anssgno)
+        # print(x)
+
+
+        sql_update_answer_list=f'''
+        UPDATE answer_list SET answer_album='{ansab}',answer_song={anssgno} WHERE userid='{uid}'
+        '''
+        postgreSQLConnect(sql_update_answer_list)
+        message = TextSendMessage(text=qname)
         line_bot_api.reply_message(event.reply_token, message)
+
     elif '不知道，正解?' in msg:
         message = TextSendMessage(text=msg)
         line_bot_api.reply_message(event.reply_token, message)
