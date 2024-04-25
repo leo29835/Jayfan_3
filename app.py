@@ -131,7 +131,8 @@ def handle_message(event):
         usernoideaalbum=usernoidealist[0][2]
         usernoideasongno=usernoidealist[0][6]
         noideastr=f"{usernoideaalbum} {usernoideasongno}"
-        line_bot_api.reply_message(event.reply_token, noideastr)
+        message = TextSendMessage(text=noideastr)
+        line_bot_api.reply_message(event.reply_token, message)
         
     elif '開始遊戲' in msg:
         answer_album='df'
