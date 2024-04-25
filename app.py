@@ -160,7 +160,7 @@ def handle_message(event):
                 template=ButtonsTemplate(
                     thumbnail_image_url=trueansalbumpic,
                     title='回答正確！',
-                    text=message,
+                    text=msg,
                     actions=[MessageAction(
                             label='下一題',
                             text='出題'
