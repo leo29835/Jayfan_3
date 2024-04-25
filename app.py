@@ -132,9 +132,48 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, message)
     else:
         message = TextSendMessage(text=msg)
-        line_bot_api.reply_message(event.reply_token, message)
+        y=message.split(' ')
+        ansalb=y[0]
+        ansno=y[1]
+        sql_select_ans_table=f'''
+        select * 
+        from album_list as a, song_list as b 
+        where a.album_no=b.album_no 
+        and a.album_name='{ansalb}' 
+        and b.song_order={ansno}
+        '''
+        #執行
+        x=postgreSQLSelect(sql_select_ans_table)
+        trueansalbum=x[0]
+        trueansalbumpic=x[3]
+
+        sql_user_table=f'''
+        SELECT * FROM answer_list
+        WHERE userid='{uid}'
+        '''
+        #執行
+        useranslist=postgreSQLSelect(sql_user_table)
+        useransalb=useranslist[1]
+        useranssongno=useranslist[2]
+        if (useransalb==trueansalbum) and (useranssongno==ansno) :
+            btMsg=TemplateSendMessage(
+                alt_text='ButtonsTemplate',
+                template=ButtonsTemplate(
+                    thumbnail_image_url=trueansalbumpic,
+                    title='回答正確！',
+                    text=message,
+                    actions=[MessageAction(
+                            label='下一題',
+                            text='出題'
+                        )]
+                )
+            )
+        else:
+            btMsg=TextSendMessage(text="回答錯誤，請重新輸入!")     
+
+        line_bot_api.reply_message(event.reply_token, btMsg)
         
-        #4/19進度 避免重複ID(連續輸入開始遊戲)、邏輯運作 
+        
 
 @handler.add(PostbackEvent)
 def handle_message(event):
