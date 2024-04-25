@@ -131,8 +131,7 @@ def handle_message(event):
         message = TextSendMessage(text="點擊出題開始")
         line_bot_api.reply_message(event.reply_token, message)
     else:
-        message = TextSendMessage(text=msg)
-        y=message.split(' ')
+        y=msg.split(' ')
         ansalb=y[0]
         ansno=y[1]
         sql_select_ans_table=f'''
