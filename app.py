@@ -143,8 +143,8 @@ def handle_message(event):
         '''
         #執行
         x=postgreSQLSelect(sql_select_ans_table)
-        trueansalbum=x[0]
-        trueansalbumpic=x[3]
+        trueansalbum=x[0][0]
+        trueansalbumpic=x[0][3]
 
         sql_user_table=f'''
         SELECT * FROM answer_list
@@ -152,8 +152,8 @@ def handle_message(event):
         '''
         #執行
         useranslist=postgreSQLSelect(sql_user_table)
-        useransalb=useranslist[1]
-        useranssongno=useranslist[2]
+        useransalb=useranslist[0][1]
+        useranssongno=useranslist[0][2]
         if (useransalb==trueansalbum) and (useranssongno==ansno) :
             btMsg=TemplateSendMessage(
                 alt_text='ButtonsTemplate',
