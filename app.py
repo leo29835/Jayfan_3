@@ -120,8 +120,19 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, message)
 
     elif '不知道，正解?' in msg:
-        message = TextSendMessage(text=msg)
-        line_bot_api.reply_message(event.reply_token, message)
+        sql_user_noidea=f'''
+        select * 
+        from album_list as a, answer_list as b 
+        where a.album_no=b.answer_album 
+        and userid='{uid}'
+        '''
+        #執行
+        usernoidealist=postgreSQLSelect(sql_user_noidea)
+        usernoideaalbum=usernoidealist[0][2]
+        usernoideasongno=usernoidealist[0][6]
+        noideastr=f"{usernoideaalbum} {usernoideasongno}"
+        line_bot_api.reply_message(event.reply_token, noideastr)
+        
     elif '開始遊戲' in msg:
         answer_album='df'
         song_order=0
