@@ -153,7 +153,7 @@ def handle_message(event):
         #執行
         useranslist=postgreSQLSelect(sql_user_table)
         useransalb=useranslist[0][1]
-        useranssongno=useranslist[0][2]
+        useranssongno=str(useranslist[0][2])
         if (useransalb==trueansalbum) and (useranssongno==ansno) :
             btMsg=TemplateSendMessage(
                 alt_text='ButtonsTemplate',
