@@ -135,11 +135,17 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, message)
         
     elif '開始遊戲' in msg:
-        answer_album='df'
-        song_order=0
-        sql_insert_answer_list_table=f"INSERT INTO answer_list VALUES('{uid}','{answer_album}',{song_order});"
-        #執行
-        postgreSQLConnect(sql_insert_answer_list_table)
+        sql_user_query=f'''
+        select * 
+        from answer_list where userid='{uid}'
+        '''
+        usercheck=postgreSQLSelect(sql_user_query)
+        if len(usercheck)==0 :
+            answer_album='df'
+            song_order=0
+            sql_insert_answer_list_table=f"INSERT INTO answer_list VALUES('{uid}','{answer_album}',{song_order});"
+            #執行
+            postgreSQLConnect(sql_insert_answer_list_table)
         message = TextSendMessage(text="點擊出題開始")
         line_bot_api.reply_message(event.reply_token, message)
     else:
@@ -155,34 +161,39 @@ def handle_message(event):
         '''
         #執行
         x=postgreSQLSelect(sql_select_ans_table)
-        trueansalbum=x[0][0]
-        trueansalbumpic=x[0][3]
+        if len(x) != 0 :
+            trueansalbum=x[0][0]
+            trueansalbumname=[0][2]
+            trueansalbumpic=x[0][3]
 
-        sql_user_table=f'''
-        SELECT * FROM answer_list
-        WHERE userid='{uid}'
-        '''
-        #執行
-        useranslist=postgreSQLSelect(sql_user_table)
-        useransalb=useranslist[0][1]
-        useranssongno=str(useranslist[0][2])
-        if (useransalb==trueansalbum) and (useranssongno==ansno) :
-            btMsg=TemplateSendMessage(
-                alt_text='ButtonsTemplate',
-                template=ButtonsTemplate(
-                    thumbnail_image_url=trueansalbumpic,
-                    title='回答正確！',
-                    text=trueansalbum+' '+useranssongno,
-                    actions=[MessageAction(
-                            label='下一題',
-                            text='出題'
-                        )]
+            sql_user_table=f'''
+            SELECT * FROM answer_list
+            WHERE userid='{uid}'
+            '''
+            #執行
+            useranslist=postgreSQLSelect(sql_user_table)
+            useransalb=useranslist[0][1]
+            useranssongno=str(useranslist[0][2])
+            if (useransalb==trueansalbum) and (useranssongno==ansno) :
+                btMsg=TemplateSendMessage(
+                    alt_text='ButtonsTemplate',
+                    template=ButtonsTemplate(
+                        thumbnail_image_url=trueansalbumpic,
+                        title='回答正確！',
+                        text=trueansalbumname+' '+useranssongno,
+                        actions=[MessageAction(
+                                label='下一題',
+                                text='出題'
+                            )]
+                    )
                 )
-            )
-        else:
-            btMsg=TextSendMessage(text="回答錯誤，請重新輸入!")     
+            else:
+                btMsg=TextSendMessage(text="回答錯誤，請重新輸入!")     
 
-        line_bot_api.reply_message(event.reply_token, btMsg)
+            line_bot_api.reply_message(event.reply_token, btMsg)
+        else:
+            btMsg=TextSendMessage(text="回答錯誤，請重新輸入!")   
+            line_bot_api.reply_message(event.reply_token, btMsg)
         
         
 
