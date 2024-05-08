@@ -133,7 +133,17 @@ def handle_message(event):
         noideastr=f"{usernoideaalbum} {usernoideasongno}"
         message = TextSendMessage(text=noideastr)
         line_bot_api.reply_message(event.reply_token, message)
-        
+    elif '開發人員' in msg:
+        developer='''發起人:FanFan
+        程式開發:FanFan
+        技術總監:KaiN
+        參與人員:FanFan KaiN Eating WeiWei Turtle Chien Fish Xuan
+        場地提供(自費):客美多咖啡
+        快來看:Jay Chou
+        玩玩看:各大資深杰倫粉
+        '''
+        btMsg=TextSendMessage(text="請按照格式回答:專輯序 曲序 \n例:2 8\n或者請點選圖文選單\"不知道，正解?\"")   
+        line_bot_api.reply_message(event.reply_token, btMsg)
     elif '開始遊戲' in msg:
         sql_user_query=f'''
         select * 
