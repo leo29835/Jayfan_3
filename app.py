@@ -134,14 +134,13 @@ def handle_message(event):
         message = TextSendMessage(text=noideastr)
         line_bot_api.reply_message(event.reply_token, message)
     elif '開發人員' in msg:
-        edveloper='''
-        發起人:FanFan
-        程式開發:FanFan
-        技術總監:KaiN
-        參與人員:FanFan KaiN Eating WeiWei Turtle Chien Fish Xuan
-        場地提供(自費):客美多咖啡
-        快來看:Jay Chou
-        玩玩看:各大資深杰倫粉
+        edveloper='''發起人:FanFan
+程式開發:FanFan
+技術總監:KaiN
+參與人員:FanFan KaiN Eating WeiWei Turtle Chien Fish Xuan
+場地提供(自費):客美多咖啡
+快來看:Jay Chou
+玩玩看:各大資深杰倫粉
         '''
         btMsg=TextSendMessage(text=edveloper)   
         line_bot_api.reply_message(event.reply_token, btMsg)
