@@ -163,7 +163,7 @@ def handle_message(event):
         x=postgreSQLSelect(sql_select_ans_table)
         if len(x) != 0 :
             trueansalbum=x[0][0]
-            trueansalbumname=[0][2]
+            trueansalbumname=x[0][2]
             trueansalbumpic=x[0][3]
 
             sql_user_table=f'''
