@@ -150,7 +150,7 @@ def handle_message(event):
         select * 
         from album_list as a, song_list as b 
         where a.album_no=b.album_no 
-        and a.album_name='{ansalb}' 
+        and a.album_order={ansalb} 
         and b.song_order={ansno}
         '''
         #執行
