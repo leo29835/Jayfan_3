@@ -196,7 +196,7 @@ def handle_message(event):
                 btMsg=TextSendMessage(text="回答錯誤，請重新輸入!")   
                 line_bot_api.reply_message(event.reply_token, btMsg)
         except:       
-            btMsg=TextSendMessage(text="請按照格式回答:專輯序 曲序 \n例:2 8")   
+            btMsg=TextSendMessage(text="請按照格式回答:專輯序 曲序 \n例:2 8\n或者請點選圖文選單\"不知道，正解?\"")   
             line_bot_api.reply_message(event.reply_token, btMsg)
         
 
